@@ -48,14 +48,12 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Установка JWT в cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   tokenString,
 		Expires: expirationTime,
 	})
 
-	// Также отправка JWT в теле ответа
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }

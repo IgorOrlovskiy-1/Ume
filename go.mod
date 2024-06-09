@@ -1,4 +1,4 @@
-module network
+module Ume
 
 go 1.22
 

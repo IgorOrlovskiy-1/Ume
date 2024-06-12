@@ -20,15 +20,23 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	db, err := postgresql.New(
-		"user=" + cfg.User + "password=" + cfg.Password + "dbname=" + cfg.DBName + "ssl=" + cfg.SSLMode,
+		"user=" + cfg.User + " password=" + cfg.Password + " dbname=" + cfg.DBName,
 	)
 	if err != nil {
 		log.Error("Failed to connect to database", sl.Err(err))
 		os.Exit(1)
 	}
+	log.Info("successfully connected to database")
 
-	_ = db
+	//test
+	id, err := db.AddUser("tester", "testerov", "12345")
+	if err != nil {
+		log.Error("Failed to add user", sl.Err(err))
+		os.Exit(1)
+	}
+	log.Info("successfully add user to table users")
 
+	_ = id
 	//TODO: router
 
 	//TODO: middlewars

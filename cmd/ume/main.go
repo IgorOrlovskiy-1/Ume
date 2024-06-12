@@ -32,7 +32,7 @@ func main() {
 	e.GET("/", hello)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1024"))
+    e.Logger.Fatal(e.Start(":" + cfg.Port))
 
 	//TODO: tests
 }

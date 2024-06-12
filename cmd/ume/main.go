@@ -10,7 +10,7 @@ import (
 	"log/slog"
 	"os"
 
-	//"github.com/a-h/templ"
+	_ "github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

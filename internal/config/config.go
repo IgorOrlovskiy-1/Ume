@@ -8,9 +8,16 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" env-default:"local"`
-	StoragePath string `yaml:"storage_path" env-required:"true"`
-	HTTPServer  `yaml:"http_server"`
+	Env        string `yaml:"env" env-default:"local"`
+	Storage    `yaml:"storage"`
+	HTTPServer `yaml:"http_server"`
+}
+
+type Storage struct {
+	User     string `yaml:"user" env-required:"true"`
+	Password string `yaml:"password" env-required:"true"`
+	DBName   string `yaml:"dbname" env-required:"true"`
+	SSLMode  string `yaml:"ssl" env-default:"disable"`
 }
 
 type HTTPServer struct {

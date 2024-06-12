@@ -19,5 +19,11 @@ func New(storagePath string) (*StoragePostgre, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	err_ping := db.Ping()
+
+	if err_ping != nil {
+		return nil, fmt.Errorf("%s: %w", op, err_ping)
+	}
+
 	return &StoragePostgre{db: db}, nil
 }

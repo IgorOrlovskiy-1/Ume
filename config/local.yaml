@@ -1,5 +1,9 @@
 env: "local" #local, dev, prod
-storage_path: "./storage/storage"
+storage:
+  user: "igor"
+  password: 12345
+  dbname: "ume"
+  ssl: "disable"
 http_server:
   host: "localhost"
   port: "8080"

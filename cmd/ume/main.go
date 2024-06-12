@@ -32,7 +32,9 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	db, err := postgresql.New(cfg.StoragePath)
+	db, err := postgresql.New(
+		"user=" + cfg.User + "password=" + cfg.Password + "dbname=" + cfg.DBName + "ssl=" + cfg.SSLMode,
+	)
 	if err != nil {
 		log.Error("Failed to connect to database", sl.Err(err))
 		//os.Exit(1)

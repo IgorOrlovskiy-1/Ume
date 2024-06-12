@@ -1,13 +1,16 @@
 package main
 
 import (
-    "Ume/internal/storage/postgresql"
-    "Ume/components/hello_templ"
-    "log/slog"
-    "os"
-	"fmt"
+	"Ume/components"
+	"Ume/internal/config"
+	"Ume/internal/lib/logger/sl"
+	"Ume/internal/storage/postgresql"
 
-    "github.com/a-h/templ"
+	"context"
+	"log/slog"
+	"os"
+
+	//"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,8 +23,8 @@ const (
 
 // Handler
 func nullpage(c echo.Context) error {
-    component := hello_templ.hello("World")
-    return component
+	data := components.Hello("World").Render(context.Background(), c.Response().Writer)
+	return data
 }
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	db, err := postgresql.New(cfg.StoragePath)
 	if err != nil {
 		log.Error("Failed to connect to database", sl.Err(err))
-		os.Exit(1)
+		//os.Exit(1)
 	}
 
 	_ = db
@@ -41,14 +44,14 @@ func main() {
 	e := echo.New()
 
 	// Middleware
-	e.Use(logger)
+	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/", templ.Handler(nullpage))
+	e.GET("/", nullpage)
 
 	// Start server
-    e.Logger.Fatal(e.Start(":" + cfg.Port))
+	e.Logger.Fatal(e.Start(":" + cfg.Port))
 
 	//TODO: tests
 }

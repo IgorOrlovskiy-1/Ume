@@ -1,16 +1,19 @@
 package main
 
 import (
-	"Ume/internal/config"
+    "Ume/internal/config"
+    "Ume/components/hello_templ"
 	"fmt"
+
+    "github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
 )
 
 // Handler
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+func nullpage(c echo.Context) error {
+    component := hello_templ.hello("World")
+    return component
 }
 
 func main() {
@@ -29,7 +32,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/", hello)
+	e.GET("/", templ.Handler(nullpage))
 
 	// Start server
     e.Logger.Fatal(e.Start(":" + cfg.Port))

@@ -1,0 +1,6 @@
+user: "igor"
+password: 4321
+host: 217.197.4.82:5432
+port: 5432
+dbname: "bd"
+ssl: "false"

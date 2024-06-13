@@ -3,7 +3,7 @@ storage:
   user: "igor"
   password: 12345
   dbname: "ume"
-  ssl: "disable"
+  ssl: "false"
 http_server:
   host: "localhost"
   port: "8080"

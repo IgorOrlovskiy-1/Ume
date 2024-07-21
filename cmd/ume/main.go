@@ -4,8 +4,14 @@ import (
 	"Ume/internal/config"
 	"Ume/internal/lib/logger/sl"
 	"Ume/internal/storage/postgresql"
+	"Ume/internal/http-server/handlers/users/user_create"
+	mwLogger "Ume/internal/middlewares/logger"
 	"log/slog"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"os"
+	"net/http"
+	//"time"
 )
 
 const (
@@ -19,27 +25,67 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	db, err := postgresql.New(
+	db, err := postgresql.NewPool(
 		"user=" + cfg.User + " password=" + cfg.Password + " dbname=" + cfg.DBName,
 	)
 	if err != nil {
 		log.Error("Failed to connect to database", sl.Err(err))
 		os.Exit(1)
 	}
-	log.Info("successfully connected to database")
+
+	log.Info("Successfully connected to database")
 
 	//test
-	id, err := db.AddUser("tester", "testerov", "12345")
-	if err != nil {
-		log.Error("Failed to add user", sl.Err(err))
-		os.Exit(1)
-	}
-	log.Info("successfully add user to table users")
+	// date := time.Now()
+	// err = db.AddUser("igor1", "orlovskiy1", "i1@test.io", "12345", "igorO1", date)
+	// if err != nil {
+	// 	log.Error("Failed to add user", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+	// log.Info("Successfully add user to table users")
 
-	_ = id
+
+	// err = db.AddFriend("igor", "tester")
+	// if err != nil {
+	// 	log.Error("Failed to add friend", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+	// log.Info("Successfully add friend to table friends")
+
+	// err = db.AddMessage("igorO", "igorO1", "залупапенисхердавалка хуй блядина !ЗЩ)")
+	// if err != nil {
+	// 	log.Error("Failed to add message", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+	// log.Info("Successfully add message to table messages")
+	
+
 	//TODO: router
 
-	//TODO: middlewars
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(mwLogger.NewLogger(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+
+	router.Post("/auth", userCreate.NewUser(log, db))
+
+	log.Info("starting server", slog.String("address", cfg.Address))
+
+	server := &http.Server{
+		Addr:	cfg.Address,
+		Handler: router,
+		ReadTimeout: cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout: cfg.IdleTimeout,
+	} 
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("Server stopped")
 
 	//TODO: tests
 }
@@ -50,13 +96,11 @@ func setupLogger(env string) *slog.Logger {
 	switch env {
 	case envLocal:
 		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-
 	case envDev:
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	case envProd:
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
-
 	}
 
 	return log

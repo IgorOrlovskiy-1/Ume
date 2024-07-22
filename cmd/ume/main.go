@@ -4,12 +4,16 @@ import (
 	"Ume/internal/config"
 	"Ume/internal/lib/logger/sl"
 	"Ume/internal/storage/postgresql"
+	// "Ume/internal/storage/redis"
 	"Ume/internal/http-server/handlers/users/user_create"
+	"Ume/internal/http-server/handlers/users/user_login"
 	mwLogger "Ume/internal/middlewares/logger"
 	"log/slog"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    "github.com/boj/redistore"
 	"os"
+	//"context"
 	"net/http"
 	//"time"
 )
@@ -34,6 +38,20 @@ func main() {
 	}
 
 	log.Info("Successfully connected to database")
+
+	// ctx := context.Background()
+	// redisClient, err := redis.NewRedisClient(ctx)
+	// if err != nil {
+	// 	log.Error("Failed to connect to redis", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+
+	store, err := redistore.NewRediStore(10, "tcp", ":6379", "", []byte(cfg.RedisStoreSecret))
+    if err != nil {
+        log.Error("Failed to add redis store", sl.Err(err))
+		os.Exit(1)
+    }
+    defer store.Close()
 
 	//test
 	// date := time.Now()
@@ -71,6 +89,8 @@ func main() {
 	router.Use(middleware.URLFormat)
 
 	router.Post("/auth", userCreate.NewUser(log, db))
+	router.Post("/login", userLogin.LoginUser(log, db, store))
+
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 

@@ -37,7 +37,8 @@ func NewUser(log *slog.Logger, newUser AddNewUser) http.HandlerFunc	{
 		
 		log = log.With (
 			slog.String("op", op),
-			slog.String("request_id", middleware.GetReqID(r.Context())))
+			slog.String("request_id", middleware.GetReqID(r.Context())),
+		)
 
 		var req Request
 
@@ -67,6 +68,8 @@ func NewUser(log *slog.Logger, newUser AddNewUser) http.HandlerFunc	{
 			log.Error("Error with hashing password, try again", sl.Err(err))
 
 			render.JSON(w, r, resp.Error("Error with hashing password, try again"))
+			
+			return
 		}
 
 		err = newUser.AddUser(req.FirstName, req.SecondName, password, req.Email, req.Username)

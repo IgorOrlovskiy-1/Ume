@@ -11,6 +11,7 @@ type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	Storage    `yaml:"storage"`
 	HTTPServer `yaml:"http_server"`
+	RedisStoreSecret string `yaml:"redis_store_secret"`
 }
 
 type Storage struct {

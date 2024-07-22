@@ -5,6 +5,7 @@ storage:
   dbname: "ume"
   ssl: "false"
 http_server:
-  address: "localhost:8084"
+  address: "localhost:8087"
   timeout: 5s
   idle_timeout: 60s
+redis_store_secret: "lsdffkoe0203jdsfjok020ojkHOIDn8fr237rnmdf{DSf}"

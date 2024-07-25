@@ -1,0 +1,44 @@
+package components
+
+templ Home() {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Login</title>
+		</head>
+		<body class="bg-gray-100">
+			<header class="hero is-primary">
+				<div class="hero-body">
+					<div class="container">
+						<h1 class="title">Login</h1>
+					</div>
+				</div>
+			</header>
+			<section class="section">
+				<div class="container"></div>
+				@DefaultLoginForm()
+			</section>
+		</body>
+	</html>
+}
+
+templ DefaultLoginForm() {
+	<form
+		id="loginForm"
+		hx-post="/login"
+		hx-trigger="submit"
+		hx-request="POST"
+		hx-headers='{"Content-Type": "application/json"}'
+		hx-include="[name]"
+		hx-target="#response"
+		hx-swap="innerHTML"
+	>
+		<input type="text" placeholder="Username" name="username"/>
+		<input type="text" placeholder="Password" name="password"/>
+		<button type="submit">Submit</button>
+	</form>
+	<div id="response"></div>
+}

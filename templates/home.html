@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+    <style>
+        .bg-gray-100 { background-color: #f7f7f7; }
+        .hero { padding: 1rem; background-color: #3273dc; color: white; }
+        .hero-body { padding: 1rem; }
+        .container { max-width: 960px; margin: 0 auto; }
+        .title { font-size: 2rem; }
+        .section { padding: 2rem 1rem; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Login</h1>
+            </div>
+        </div>
+    </header>
+    <section class="section">
+        <div class="container">
+            <form
+                id="loginForm"
+                hx-post="/login"
+                hx-trigger="submit"
+                hx-swap="outerHTML"
+                onsubmit="return handleFormSubmit(this);"
+                hx-vals='{ "username": "", "password": "" }'
+            >
+                <input type="text" id="username" name="username" placeholder="Username" required />
+                <input type="password" id="password" name="password" placeholder="Password" required />
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </section>
+    <script>
+        function handleFormSubmit(form) {
+            const formData = new FormData(form);
+            const jsonData = {};
+            formData.forEach((value, key) => { jsonData[key] = value });
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data here
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            // Prevent the default form submission
+            return false;
+        }
+    </script>
+</body>
+</html>

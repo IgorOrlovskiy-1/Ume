@@ -7,6 +7,7 @@ import (
 	// "Ume/internal/storage/redis"
 	"Ume/internal/http-server/handlers/users/user_create"
 	"Ume/internal/http-server/handlers/users/user_login"
+	"Ume/internal/http-server/handlers/homePage"
 	mwLogger "Ume/internal/middlewares/logger"
 	"log/slog"
 	"github.com/go-chi/chi/v5"
@@ -88,6 +89,7 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
+	router.Get("/", homePage.GetHomePage(log))
 	router.Post("/auth", userCreate.NewUser(log, db))
 	router.Post("/login", userLogin.LoginUser(log, db, store))
 

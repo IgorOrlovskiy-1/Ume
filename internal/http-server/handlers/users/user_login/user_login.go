@@ -23,7 +23,7 @@ type Request struct {
 
 type Response struct {
 	resp.Response
-	SessionID string `json:"sessionId"` 
+	SessionName string `json:"session_name"` 
 }
 
 type IsFoundUser interface {
@@ -41,7 +41,6 @@ func LoginUser(log *slog.Logger, isUserExists IsFoundUser, store *redistore.Redi
 		)
 
 		var req Request
-
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
 			log.Error("Failed to decode request body", sl.Err(err))
@@ -89,8 +88,8 @@ func LoginUser(log *slog.Logger, isUserExists IsFoundUser, store *redistore.Redi
 
 		log.Info("User founded", slog.Any("username", req.Username))
 
-		sessionId := uuid.New().String()
-		session, err := store.Get(r, sessionId)
+		sessionName := uuid.New().String()		
+		session, err := store.Get(r, sessionName)
         if err != nil {
             log.Error("Error with add session to redis", sl.Err(err))
 
@@ -112,14 +111,14 @@ func LoginUser(log *slog.Logger, isUserExists IsFoundUser, store *redistore.Redi
         session.Values["userId"] = id
         err = session.Save(r, w)
         if err != nil {
-            log.Error("Error with add session to redis", sl.Err(err))
+            log.Error("Error with add values to session", sl.Err(err))
 
 			render.JSON(w, r, resp.Error("InternalServerError"))
 
 			return
 		}
 
-		render.JSON(w, r, Response{ Response: resp.OK(), SessionID: sessionId }) 
+		render.JSON(w, r, Response{ Response: resp.OK(), SessionName: sessionName }) 
 	}
 }
 
